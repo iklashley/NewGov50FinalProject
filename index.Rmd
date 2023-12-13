@@ -13,8 +13,8 @@ output:
 
 I am interested in exploring data related to...
 
-```{r}
-install.packages("svglite")
+```{r, message= FALSE}
+
 library(svglite)
 library(kableExtra)
 library(tidyverse)
@@ -35,19 +35,13 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(dplyr)
-library(haven)
- cumulative_2006_2022 <- read_dta("~/Desktop/cumulative_2006-2022.dta")
- library(haven)
- cumulative_ces_policy_preferences <- read_dta("~/Desktop/cumulative_ces_policy_preferences.dta")
- 
+
  
 ces <- left_join(
 read_dta("~/Desktop/cumulative_2006-2022.dta"),
 read_dta("~/Desktop/cumulative_ces_policy_preferences.dta")
 ) |>
 sjlabelled::as_label()
-library(dplyr)
 View(ces)
 
 ```
