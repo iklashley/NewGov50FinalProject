@@ -12,3 +12,87 @@ output:
 ## Project thoughts
 
 I am interested in exploring data related to...
+
+```{r}
+library(tidyverse)
+library(sjlabelled)
+library(haven)
+library(ggridges)
+library(broom)
+library(dplyr)
+options(
+  knitr.kable.NA = '',
+  width = 100)
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center")
+```
+
+```{r}
+library(dplyr)
+library(haven)
+ cumulative_2006_2022 <- read_dta("~/Desktop/cumulative_2006-2022.dta")
+ library(haven)
+ cumulative_ces_policy_preferences <- read_dta("~/Desktop/cumulative_ces_policy_preferences.dta")
+ 
+ 
+ces <- left_join(
+read_dta("~/Desktop/cumulative_2006-2022.dta"),
+read_dta("~/Desktop/cumulative_ces_policy_preferences.dta")
+) |>
+sjlabelled::as_label()
+library(dplyr)
+View(ces)
+
+```
+
+
+```{r}
+outcome_ces <- ces |>
+  select("year", "case_id", "weight", "weight_cumulative", "state", "county_fips", "guns_permits") |>
+  drop_na()
+View(outcome_ces)
+```
+
+```{r}
+outcome_ces |>
+  ggplot()+
+  geom_bar(
+    aes(
+      x = guns_permits,
+      y = ..count../sum(..count..)
+    ), width = .25, fill = "red", col = "white"
+  ) +
+  labs(title = "Overall Distribution of EACCP Support",
+       x = "Supporters of Easier Access to Concealed Carry Permits",
+       y = "Proportion",
+       caption = "Source: Cumulative CES Policy Preferences")
+```
+
+```{r, echo = FALSE}
+ces <- ces |>
+  mutate(easier_conceal_carry = if_else( guns_permits == "Support", 1, 0))
+
+ces |>
+  group_by(county_fips) |>
+  summarize(average = mean(easier_conceal_carry, na.rm = TRUE)) |>
+  ggplot(aes(x = average)) +
+  geom_histogram(aes(y = ..density..), fill = "red", col = "white")+
+  labs(title = "Distribution of County Level Proportions of Support",
+       x = "Proportion of Support for EACCP",
+       y = "Density",
+       caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
+```
+
+```{r}
+ces <- ces |>
+  mutate(
+    religion_very_important = if_else(relig_imp == "Very Important", 1, 0),
+    religion_somewhat_important = if_else(relig_imp == "Somewhat Important", 1, 0),
+    religion_not_too_important = if_else(relig_imp == "Not Too Important", 1, 0),
+    religion_not_at_all_important = if_else(relig_imp == "Not at All Important", 1, 0),
+  )
+```
+
