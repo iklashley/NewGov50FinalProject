@@ -14,12 +14,16 @@ output:
 I am interested in exploring data related to...
 
 ```{r}
+install.packages("svglite")
+library(svglite)
+library(kableExtra)
 library(tidyverse)
 library(sjlabelled)
 library(haven)
 library(ggridges)
 library(broom)
 library(dplyr)
+library(tidyr)
 options(
   knitr.kable.NA = '',
   width = 100)
@@ -94,5 +98,126 @@ ces <- ces |>
     religion_not_too_important = if_else(relig_imp == "Not Too Important", 1, 0),
     religion_not_at_all_important = if_else(relig_imp == "Not at All Important", 1, 0),
   )
+
+ces <- ces |>
+  unite(religion_important, religion_very_important, religion_somewhat_important, sep = "|", remove = FALSE) |>
+  mutate(religion_important = if_else(grepl("1", religion_important), 1, 0))
+
+ces |>
+  group_by(county_fips) |>
+  summarize(
+    average = mean(easier_conceal_carry, na.rm = TRUE),
+    prop_religion_important = (mean(religion_important, na.rm = TRUE))) |>
+  ggplot(aes(x = prop_religion_important, y = average)) +
+  geom_point(shape = 1) +
+  geom_smooth(method = "lm")+
+  xlim(0,1) + ylim(0,1)+
+  labs(title = "Support for EACCP by Proportion of People who Consider Religion Important",
+       x = "Proportion of People who Consider Religion Important",
+       y = "Proportion of Support for Easier Access to Conceal Carry Permits",
+       caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
+
+```
+
+
+```{r}
+ces <- ces|>
+  mutate(nonwhite = if_else(race == "White", 0, 1))
+
+ces |>
+  group_by(county_fips) |>
+  summarize(
+    average = mean(easier_conceal_carry, na.rm = TRUE),
+    prop_nonwhite = (mean(nonwhite, na.rm = TRUE))) |>
+  ggplot(aes(x = prop_nonwhite, y = average)) +
+  geom_point(shape = 1) +
+  geom_smooth(method = "lm")+
+  xlim(0,1) + ylim(0,1)+
+  labs(title = "Support for EACCP by Proportion of Minorities",
+       x = "Proportion of Minorities",
+       y = "Proportion of Support for Easier Access to Concealed Carry Permits",
+       caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
+
+```
+
+
+```{r}
+ces <- ces %>%
+  mutate(
+    no_high_school = if_else(educ == "No HS", 1, 0),
+    high_school_graduate = if_else(educ == "High School Graduate", 1, 0),
+    some_college = if_else(educ == "Some College", 1, 0),
+    two_year = if_else(educ == "2-Year", 1, 0),
+    four_year = if_else(educ == "4-Year", 1, 0),
+    post_grad = if_else(educ == "Post-Grad", 1, 0),
+    missing = if_else(educ == "(Missing)", 1, 0)
+  )
+
+ces <- ces %>%
+  unite(no_college, no_high_school, high_school_graduate, sep = "|", remove = FALSE) %>%
+  mutate(no_college = if_else(grepl("1", no_college), 1, 0))
+
+
+ces |>
+  group_by(county_fips) |>
+  summarize(
+    average = mean(easier_conceal_carry, na.rm = TRUE),
+    prop_nocollege = (mean(no_college, na.rm = TRUE))) |>
+    ggplot(aes(x = prop_nocollege, y = average)) +
+    geom_point(shape = 1) +
+    geom_smooth(method = "lm")+
+    xlim(0,1) + ylim(0,1)+
+ labs(title = " Support for EACCP by Proportion of Non-College Educated People",
+        x = "Proportion of Non College Educated People",
+        y = "Proportion of Support for EACCP",
+        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
+```
+
+
+```{r}
+ces <- ces |>
+  mutate(Liberal = ifelse(ideo5 == "Liberal", 1, 0),
+         Unemployed = ifelse(employ == "Unemployed", 1, 0),
+         Woman = ifelse(gender == "Female", 1, 0),
+         Parent = ifelse(has_child == "Yes", 1, 0),
+         Military_background = ifelse(no_milstat == "No", 1, 0))
+
+mod1 <- lm(data = ces,
+   easier_conceal_carry ~ religion_important)
+
+mod1
+
+
+mod2 <- lm(data = ces,
+   easier_conceal_carry ~ religion_important + Liberal + Woman + Unemployed + nonwhite + Parent + Military_background + no_college)
+
+mod2
+```
+
+```{r}
+results <-
+  full_join(
+    mod1 |> 
+      broom::tidy() |> 
+      select(term, est1 = estimate, se1 = std.error, pval1 = p.value),
+    mod2 |> 
+      broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+  results |>
+  knitr::kable(
+    booktabs = TRUE, digits = 2,
+    col.names = c("Coefficient", rep(c("Bivariate", "Multivariate"), 3))) |>
+  kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  add_header_above(
+    header = c(
+      " " = 1, 
+      "Coef. estimate" = 2, 
+      "Std. error" = 2, 
+      "P-value" = 2))
+
 ```
 
