@@ -186,7 +186,9 @@ ces |>
        y = "Proportion of Support for Easier Access to Conceal Carry Permits",
        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
 ```
-There are some other variables, apart from conservativeness, I anticipated could be tied to people's likelihood to support EACCP, like whiteness and level of education. Below find scatterplots showing the relationship between Support for EACCP and nonwhiteness and a lack of college education.  
+
+There are some other variables, apart from conservativeness, I anticipated could be tied to people's likelihood to support EACCP, like whiteness and level of education. Below find scatterplots showing the relationship between Support for EACCP and nonwhiteness and a lack of college education.
+
 ```{r}
 #Creating Binary Variable for Non-whiteness
 
