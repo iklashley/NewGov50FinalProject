@@ -1,19 +1,20 @@
 ---
 title: "Gov 50 Final Project"
-author: "Your Name Here"
-description: "My final project"
+author: "Isabella Lashley"
+description: "Analyzing the Relationship between Religiousness and Support for Gun-Control Policy"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 
+## Introduction
 
-## Project thoughts
+Physical safety is a mutual value within American society, one that most people can agree is essential to maintaining an effective and functioning society. Guns and gun-related deaths pose a direct threat to that shared goal. Thus, gun control is a topic at the forefront of American minds. Policy is one of the most effective ways to change the realities in our world. I want to tackle a, in my belief, less talked about gun control stance: support for easier access to conceal carry permits (EACCP). 25 states in the United States have legislation that will completely do away with any permits required to carry a concealed gun in public. Unfortunately, weakening requirements to carry a concealed gun has been shown to increase violent crime. Looser gun control policies are generally marketed by right-leaning political parties and those who subscribe to them, but I wanted to consider the beliefs on EACCP based on another demographic marker, self-reported importance of religion. I hypothesize that those who self-report higher importance of religion will also have a higher likelihood of supporting EACCP. Questions like these are integral to ask in a country whose political parties are so staunchly in opposition. To many Americans, it would seem instinctive that conservatives may be in support of easier EACCP, but asking less obvious questions may help figure out how we can predict opinions on critical issues like gun control. With these predictions, more accurate and effective campaigns can be made to garner support for policies that will keep all people safer. 
 
-I am interested in exploring data related to...
+```{r, echo = FALSE}
 
-```{r, message= FALSE}
+# Setting Up and Loading Packages 
 
 library(svglite)
 library(kableExtra)
@@ -24,6 +25,7 @@ library(ggridges)
 library(broom)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
 options(
   knitr.kable.NA = '',
   width = 100)
@@ -34,9 +36,24 @@ knitr::opts_chunk$set(
   fig.align = "center")
 ```
 
-```{r}
+## Data Choice 
 
- 
+I chose to use two different cross-sectional survey data sets and merge them into one for the purposes of my investigation.
+
+1. Cumulative CES Policy Preferences 
+
+This data amalgamates responses to policy preference questions from Cooperative Election Study (CES) polls spanning between the years 2006-2021. This dataset reflects 557,456 responses across 54 policy preference question items. The analysis in this report concentrates on the guns_permits policy preference, gathering respondents' opinions on policy that would make accessing concealed carry permits easier to access. 
+
+2. Cumulative CCES Common Content 
+This data incorporates the same policy preference data as the previous dataset but supplements it with additional categorical variables, specifically demographic information including race, educational background, gender, employment status, military status, etc.
+
+The research design adopts an observational approach, employing correlational analysis that specifically refrains from making presumptions about causal relationships.
+
+
+```{r, echo = FALSE}
+
+#Uniting Cumulative CES Policy Preferences and Cumulative CCES Common Content Data
+
 ces <- left_join(
 read_dta("~/Desktop/cumulative_2006-2022.dta"),
 read_dta("~/Desktop/cumulative_ces_policy_preferences.dta")
@@ -47,7 +64,14 @@ View(ces)
 ```
 
 
+## Outcome of Interest
+
+My outcome of interest I chose is the guns_permits variable. This data reflects the opinions on easing ability to obtain concealed-carry permits. It is only reflected in the data beginning in 2013, since that was the first year the question was asked, and it went on to be asked in all subsequent years. The exact phrasing of the question changed slightly across the years, with the phrase "Make it easier for people to obtain concealed-carry permit" present in all iterations of the question. Respondents had the option to Support or Oppose. The outcome variable itself is the proportion of respondents who opted to Support of those who responded. Support for EACCP can be visualized both as general and also county specific (both shown below)
+
 ```{r}
+
+#Creating Dataframe With Just The Outcome Variable
+
 outcome_ces <- ces |>
   select("year", "case_id", "weight", "weight_cumulative", "state", "county_fips", "guns_permits") |>
   drop_na()
@@ -55,6 +79,9 @@ View(outcome_ces)
 ```
 
 ```{r}
+
+#Creating Bar Plot to Show Distribution of Outcome Variable
+
 outcome_ces |>
   ggplot()+
   geom_bar(
@@ -70,8 +97,13 @@ outcome_ces |>
 ```
 
 ```{r, echo = FALSE}
+
+#Creating Binary Variable Based on Response to guns_permits variable 
+
 ces <- ces |>
   mutate(easier_conceal_carry = if_else( guns_permits == "Support", 1, 0))
+
+#Creating Histogram Showing Support for EACCP across Counties
 
 ces |>
   group_by(county_fips) |>
@@ -84,7 +116,15 @@ ces |>
        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
 ```
 
+## Factors of My Analysis
+I want to consider how self-reported religiousness relates to support for EACCP. The relig_imp variable is what I used to find this. Respondents were asked “How important is religion in your life?” and were offered four options: Very Important, Somewhat Important, Not Too Important, and Not at All Important. Notably, there are some answers Missing on this question. I chose to unite those who deemed religion Very Important and Somewhat Important in my analysis to create the variable religion_important, more generally referring to people who considered religion important to their lives. 
+
+Below is a bar plot showing the proportion of respondents religion_important who support EACCP and scatterplot with a line of best fit showing the relationship between Support for EACCP and self-reported religious importance, using the religion_important variable. 
+
 ```{r}
+
+#Creating Binary Variables for Different Levels of Religiousness
+
 ces <- ces |>
   mutate(
     religion_very_important = if_else(relig_imp == "Very Important", 1, 0),
@@ -93,9 +133,41 @@ ces <- ces |>
     religion_not_at_all_important = if_else(relig_imp == "Not at All Important", 1, 0),
   )
 
+#Uniting religion_very_important and religion_somewhat_important to Create Binary Variable Religion_important
+
 ces <- ces |>
   unite(religion_important, religion_very_important, religion_somewhat_important, sep = "|", remove = FALSE) |>
   mutate(religion_important = if_else(grepl("1", religion_important), 1, 0))
+
+```
+```{r}
+
+religion_important_ces <- subset(ces, religion_important == 1, na.rm = TRUE)
+
+outcome_religion_important_ces <- religion_important_ces |>
+  select("year", "case_id", "weight", "weight_cumulative", "state", "county_fips", "guns_permits") |>
+  drop_na()
+
+outcome_religion_important_ces |>
+  ggplot()+
+  geom_bar(
+    aes(
+      x = guns_permits,
+      y = ..count../sum(..count..)
+    ), width = .25, fill = "red", col = "white"
+  ) +
+  labs(title = "Overall Distribution of EACCP Support within Self-Reported Religious",
+       x = "Supporters of Easier Access to Concealed Carry Permits",
+       y = "Proportion",
+       caption = "Source: Cumulative CES Policy Preferences")
+
+mean(ces$easier_conceal_carry, na.rm = TRUE)
+mean(outcome_religion_important_ces$easier_conceal_carry, na.rm = TRUE)
+
+```
+
+```{r}
+#Creating Scatterplot with Linear Regression Line Showing Relationship between Religious Importance and Support for EACCP by County
 
 ces |>
   group_by(county_fips) |>
@@ -110,13 +182,15 @@ ces |>
        x = "Proportion of People who Consider Religion Important",
        y = "Proportion of Support for Easier Access to Conceal Carry Permits",
        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
-
 ```
-
-
+There are some other variables, apart from conservativeness, I anticipated could be tied to people's likelihood to support EACCP, like whiteness and level of education. Below find scatterplots showing the relationship between Support for EACCP and nonwhiteness and a lack of college education.  
 ```{r}
+#Creating Binary Variable for Non-whiteness
+
 ces <- ces|>
   mutate(nonwhite = if_else(race == "White", 0, 1))
+
+#Creating Scatterplot with Linear Regression Line Showing Relationship between Minority Proportion and Support for EACCP by County
 
 ces |>
   group_by(county_fips) |>
@@ -136,7 +210,10 @@ ces |>
 
 
 ```{r}
-ces <- ces %>%
+
+#Creating Binary Variables for Different Levels of Education
+
+ces <- ces |>
   mutate(
     no_high_school = if_else(educ == "No HS", 1, 0),
     high_school_graduate = if_else(educ == "High School Graduate", 1, 0),
@@ -147,10 +224,13 @@ ces <- ces %>%
     missing = if_else(educ == "(Missing)", 1, 0)
   )
 
-ces <- ces %>%
+#Uniting no_high_school and high_school_graduate to Create Binary Variable no_college
+
+ces <- ces |>
   unite(no_college, no_high_school, high_school_graduate, sep = "|", remove = FALSE) %>%
   mutate(no_college = if_else(grepl("1", no_college), 1, 0))
 
+#Creating Scatterplot with Linear Regression Line Showing Relationship between Non-College Educated Proportion and Support for EACCP by County
 
 ces |>
   group_by(county_fips) |>
@@ -167,8 +247,14 @@ ces |>
         caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
 ```
 
+The line of best fit within the plots shows a positive relationship between higher proportions of non-college educated people and support for EACCP and a negative relationship between higher proportions of minorities and support for EACCP. I recognized that these could all be possible confounding variables so used linear regressions to make my observations more effective. 
 
-```{r}
+I made a bivariate linear regression comparing Support of EACCP and Religious Importance and a Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level, to control for some of possible confounding variables. Ideally, one would control for all possible confounders; however, here I chose what I anticipated might be most relevant to my inquiry. Below is a table displaying the resulting coefficient estimates, standard errors, and p-values. 
+
+```{r, echo = FALSE}
+
+#Creating Binary Variables for Liberal-ness, Unemployment, Gender (woman), Parenthood, and Military Background
+
 ces <- ces |>
   mutate(Liberal = ifelse(ideo5 == "Liberal", 1, 0),
          Unemployed = ifelse(employ == "Unemployed", 1, 0),
@@ -176,11 +262,14 @@ ces <- ces |>
          Parent = ifelse(has_child == "Yes", 1, 0),
          Military_background = ifelse(no_milstat == "No", 1, 0))
 
+#Creating Bivariate Linear Regression Comparing Support of EACCP and Religious Importance
+
 mod1 <- lm(data = ces,
    easier_conceal_carry ~ religion_important)
 
 mod1
 
+#Creating Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level
 
 mod2 <- lm(data = ces,
    easier_conceal_carry ~ religion_important + Liberal + Woman + Unemployed + nonwhite + Parent + Military_background + no_college)
@@ -189,6 +278,9 @@ mod2
 ```
 
 ```{r}
+
+#Uniting the two linear regressions 
+
 results <-
   full_join(
     mod1 |> 
@@ -212,6 +304,11 @@ results <-
       "Coef. estimate" = 2, 
       "Std. error" = 2, 
       "P-value" = 2))
+  
 
 ```
+##Results 
+
+
+
 
