@@ -10,7 +10,13 @@ output:
 
 ## Introduction
 
-Physical safety is a mutual value within American society, one that most people can agree is essential to maintaining an effective and functioning society. Guns and gun-related deaths pose a direct threat to that shared goal. Thus, gun control is a topic at the forefront of American minds. Policy is one of the most effective ways to change the realities in our world. I want to tackle a, in my belief, less talked about gun control stance: support for easier access to conceal carry permits (EACCP). 25 states in the United States have legislation that will completely do away with any permits required to carry a concealed gun in public. Unfortunately, weakening requirements to carry a concealed gun has been shown to increase violent crime. Looser gun control policies are generally marketed by right-leaning political parties and those who subscribe to them, but I wanted to consider the beliefs on EACCP based on another demographic marker, self-reported importance of religion. I hypothesize that those who self-report higher importance of religion will also have a higher likelihood of supporting EACCP. Questions like these are integral to ask in a country whose political parties are so staunchly in opposition. To many Americans, it would seem instinctive that conservatives may be in support of easier EACCP, but asking less obvious questions may help figure out how we can predict opinions on critical issues like gun control. With these predictions, more accurate and effective campaigns can be made to garner support for policies that will keep all people safer. 
+Physical safety is a mutual value within American society, one that most people can agree is essential to maintaining an effective and functioning society. Guns and gun-related deaths pose a direct threat to that shared goal. Thus, gun control is a topic at the forefront of American minds. Policy is one of the most effective ways to change the realities in our world. 
+
+I want to tackle a, in my belief, less talked about gun control stance: support for easier access to conceal carry permits (EACCP). 25 states in the United States have legislation that will completely do away with any permits required to carry a concealed gun in public. Unfortunately, weakening requirements to carry a concealed gun has been shown to increase violent crime (https://publichealth.jhu.edu/2022/study-finds-significant-increase-in-firearm-assaults-in-states-that-relaxed-conceal-carry-permit-restrictions). Looser gun control policies are generally marketed by right-leaning political parties and those who subscribe to them, but I wanted to consider the beliefs on EACCP based on another demographic marker, self-reported importance of religion. 
+
+I hypothesize that those who self-report higher importance of religion will also have a higher likelihood of supporting EACCP. Questions like these are integral to ask in a country whose political parties are so staunchly in opposition. To many Americans, it would seem instinctive that conservatives may be in support of easier EACCP, but asking less obvious questions may help figure out how we can predict opinions on critical issues like gun control. 
+
+With these predictions, more accurate and effective campaigns can be made to garner support for policies that will keep all people safer. 
 
 ```{r, echo = FALSE}
 
@@ -36,7 +42,7 @@ knitr::opts_chunk$set(
   fig.align = "center")
 ```
 
-## Data Choice 
+## Data 
 
 I chose to use two different cross-sectional survey data sets and merge them into one for the purposes of my investigation.
 
@@ -64,7 +70,7 @@ View(ces)
 ```
 
 
-## Outcome of Interest
+### Outcome of Interest
 
 My outcome of interest I chose is the guns_permits variable. This data reflects the opinions on easing ability to obtain concealed-carry permits. It is only reflected in the data beginning in 2013, since that was the first year the question was asked, and it went on to be asked in all subsequent years. The exact phrasing of the question changed slightly across the years, with the phrase "Make it easier for people to obtain concealed-carry permit" present in all iterations of the question. Respondents had the option to Support or Oppose. The outcome variable itself is the proportion of respondents who opted to Support of those who responded. Support for EACCP can be visualized both as general and also county specific (both shown below)
 
@@ -109,14 +115,14 @@ ces |>
   group_by(county_fips) |>
   summarize(average = mean(easier_conceal_carry, na.rm = TRUE)) |>
   ggplot(aes(x = average)) +
-  geom_histogram(aes(y = ..density..), fill = "red", col = "white")+
+  geom_histogram(aes(y = ..density..), fill = "blue", col = "white")+
   labs(title = "Distribution of County Level Proportions of Support",
        x = "Proportion of Support for EACCP",
        y = "Density",
        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
 ```
 
-## Factors of My Analysis
+### Factors of My Analysis
 I want to consider how self-reported religiousness relates to support for EACCP. The relig_imp variable is what I used to find this. Respondents were asked “How important is religion in your life?” and were offered four options: Very Important, Somewhat Important, Not Too Important, and Not at All Important. Notably, there are some answers Missing on this question. I chose to unite those who deemed religion Very Important and Somewhat Important in my analysis to create the variable religion_important, more generally referring to people who considered religion important to their lives. 
 
 Below is a bar plot showing the proportion of respondents religion_important who support EACCP and scatterplot with a line of best fit showing the relationship between Support for EACCP and self-reported religious importance, using the religion_important variable. 
@@ -154,15 +160,12 @@ outcome_religion_important_ces |>
     aes(
       x = guns_permits,
       y = ..count../sum(..count..)
-    ), width = .25, fill = "red", col = "white"
+    ), width = .25, fill = "green", col = "white"
   ) +
   labs(title = "Overall Distribution of EACCP Support within Self-Reported Religious",
        x = "Supporters of Easier Access to Concealed Carry Permits",
        y = "Proportion",
        caption = "Source: Cumulative CES Policy Preferences")
-
-mean(ces$easier_conceal_carry, na.rm = TRUE)
-mean(outcome_religion_important_ces$easier_conceal_carry, na.rm = TRUE)
 
 ```
 
@@ -249,7 +252,7 @@ ces |>
 
 The line of best fit within the plots shows a positive relationship between higher proportions of non-college educated people and support for EACCP and a negative relationship between higher proportions of minorities and support for EACCP. I recognized that these could all be possible confounding variables so used linear regressions to make my observations more effective. 
 
-I made a bivariate linear regression comparing Support of EACCP and Religious Importance and a Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level, to control for some of possible confounding variables. Ideally, one would control for all possible confounders; however, here I chose what I anticipated might be most relevant to my inquiry. Below is a table displaying the resulting coefficient estimates, standard errors, and p-values. 
+I made a bivariate linear regression comparing Support of EACCP and Religious Importance and a Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level, to control for some of possible confounding variables. Ideally, one would control for all possible confounders; however, here I chose what I anticipated might be most relevant to my inquiry. Below is are tables displaying the linear regressions I conducted and the resulting coefficient estimates, standard errors, and p-values. 
 
 ```{r, echo = FALSE}
 
@@ -309,6 +312,33 @@ results <-
 ```
 ##Results 
 
+### Bivariate Regression Interpretation
+The bivariate model shows that for an increase of 1 unit in proportion of self-reported religious people there is a 0.15 unit increase in the proportion of support for EACCP. In other words, the proportion of people who supported EACCP would likely be 0.15 higher in a group with self-reported religious people than in a group without.
+
+The standard error here was 0 and the p-value for the religion_important coefficient was 0, which, as I will further discuss means that this relationship is statistically significant
 
 
+### Multivariate Regression Interpretation
+
+When considering the covariates we explored in the multivariate model, there is an only very slightly lower association. When holding ideological affiliation, employment status, gender, whiteness, parenthood, and a military background constant, a 1 unit increase in self-reported religious people has a .13 unit increase in the proportion of support for EACCP. In other words, the proportion of people who supported EACCP would likely be 0.13 higher in a group with self-reported religious people than in a group without, considering ideological affiliation, employment status, gender, whiteness, parenthood, and a military background remained constant. 
+
+Similar to the bivariate model the standard error was 0 and the p-value for the religion_important coefficient was 0; thus, similarly statistically significant. 
+
+### Statistical Significance
+
+In both of these regression models, a statistically significant correlation exists between the religion_important variable and the support for easier access to concealed carry permits, as evidenced by a p-value of 0 for the coefficient associated with religion_important in both models at the test level of $\alpha = 0.05$. My hypothesis predicted a positive correlation between self-reported religiousness and support for EACCP, and the p-value of 0 indicates that the estimated correlation coefficient in the regression has an extremely low probability of being random or inconsequential—nearly a 0 percent probability of being meaningless. Conversely, there is almost a 100 percent probability that the estimated correlation is not a result of random chance. These estimated correlations are so distinct from the null distribution that they both must be statistically significant.
+
+### Causality or Correlation?
+
+A causal link between self-reported religiousness and increased support for EACCP cannot be concluded here. To begin, the self-reported importance of religious cannot be randomly assigned to the survey’s participants, complicating the regression for possible confounding variables that cannot yet be accounted for. The multivariate regression seeks to mitigate some of these confounding factors, including ideology, with liberalism being a the variable I had anticipated would be be most closely negatively correlated with support for EACCP. The analysis incorporates a variable identifying participants as liberal or not, with liberalism defined as supporting socially progressive policies and promoting social welfare. People who self-identified as liberal are, as I has anticipated, less likely to endorse a policy for EACCP. There are many other potential confounding variables, such as military status and college education, that the regression tries to control for. However, since there are so many more confounders that could not be accounted for,  this relationship cannot be faithfully defined as causal.
+
+## Conclusion 
+
+With the initial question of how religiousness impacts position on gun control policy, I came to a hypothesis that self-reported religious people would be more likely to support policy that made easier access to concealed carry permits. My results supported my initial hypothesis showing that a 1 unit increase in self-reported religious people led to a .15 unit increase in support for EACCP, and a .13 unit increase controlling for a few confounding variables. With 0 standard error and 0 p-value, these results are statistically significant. 
+
+There are however some limitations to my inquiry. Firstly, the phrasing of the question "How important is religion in your life?” may lead to many different interpretations. There are some people who may over-inflate or under-inflate their religiousness, a confounding variable that would certainly impact the results of my analysis. There are also so many other confounding variables that are difficult to predict, like a person's past experiences with guns or with gun violence, that would undoubtedly affect the relationships I have found. 
+
+If given more resources to improve my analysis, I might invest in finding more longitudinal data, so that I might see if a given person's self-reported religiousness increases if their support for easier access to conceal carry permits might also increase. This kind of data would be helpful in mitigating the confounding variable of self-reporting, as a person religiousness now can be relative to their religiousness in the past rather than an absolute measure of religious importance. I would also just increase the questions asked in the survey (like a question about being the victim of gun violence, for example) to attempt to control for as many confounders as possible. 
+
+I believe this kind of analysis is essential for understanding the people within the United States and thus also understanding how to enact meaningful and beneficial change in the United States.
 

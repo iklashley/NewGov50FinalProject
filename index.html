@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/figure-html5/unnamed-chunk-6-1.png","index_files/figure-html5/unnamed-chunk-7-1.png","index_files/figure-html5/unnamed-chunk-8-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.20/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/kePrint-0.0.1/kePrint.js","index_files/lightable-0.0.1/lightable.css","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-10-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/figure-html5/unnamed-chunk-6-1.png","index_files/figure-html5/unnamed-chunk-7-1.png","index_files/figure-html5/unnamed-chunk-8-1.png","index_files/figure-html5/unnamed-chunk-9-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.20/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/kePrint-0.0.1/kePrint.js","index_files/lightable-0.0.1/lightable.css","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1519,14 +1519,27 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
-<h2 id="project-thoughts">Project thoughts</h2>
-<p>I am interested in exploring data related to…</p>
+<h2 id="introduction">Introduction</h2>
+<p>Physical safety is a mutual value within American society, one that most people can agree is essential to maintaining an effective and functioning society. Guns and gun-related deaths pose a direct threat to that shared goal. Thus, gun control is a topic at the forefront of American minds. Policy is one of the most effective ways to change the realities in our world. I want to tackle a, in my belief, less talked about gun control stance: support for easier access to conceal carry permits (EACCP). 25 states in the United States have legislation that will completely do away with any permits required to carry a concealed gun in public. Unfortunately, weakening requirements to carry a concealed gun has been shown to increase violent crime. Looser gun control policies are generally marketed by right-leaning political parties and those who subscribe to them, but I wanted to consider the beliefs on EACCP based on another demographic marker, self-reported importance of religion. I hypothesize that those who self-report higher importance of religion will also have a higher likelihood of supporting EACCP. Questions like these are integral to ask in a country whose political parties are so staunchly in opposition. To many Americans, it would seem instinctive that conservatives may be in support of easier EACCP, but asking less obvious questions may help figure out how we can predict opinions on critical issues like gun control. With these predictions, more accurate and effective campaigns can be made to garner support for policies that will keep all people safer.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
+<h2 id="data-choice">Data Choice</h2>
+<p>I chose to use two different cross-sectional survey data sets and merge them into one for the purposes of my investigation.</p>
+<ol type="1">
+<li>Cumulative CES Policy Preferences</li>
+</ol>
+<p>This data amalgamates responses to policy preference questions from Cooperative Election Study (CES) polls spanning between the years 2006-2021. This dataset reflects 557,456 responses across 54 policy preference question items. The analysis in this report concentrates on the guns_permits policy preference, gathering respondents’ opinions on policy that would make accessing concealed carry permits easier to access.</p>
+<ol start="2" type="1">
+<li>Cumulative CCES Common Content
+This data incorporates the same policy preference data as the previous dataset but supplements it with additional categorical variables, specifically demographic information including race, educational background, gender, employment status, military status, etc.</li>
+</ol>
+<p>The research design adopts an observational approach, employing correlational analysis that specifically refrains from making presumptions about causal relationships.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
+<h2 id="outcome-of-interest">Outcome of Interest</h2>
+<p>My outcome of interest I chose is the guns_permits variable. This data reflects the opinions on easing ability to obtain concealed-carry permits. It is only reflected in the data beginning in 2013, since that was the first year the question was asked, and it went on to be asked in all subsequent years. The exact phrasing of the question changed slightly across the years, with the phrase “Make it easier for people to obtain concealed-carry permit” present in all iterations of the question. Respondents had the option to Support or Oppose. The outcome variable itself is the proportion of respondents who opted to Support of those who responded. Support for EACCP can be visualized both as general and also county specific (both shown below)</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -1536,15 +1549,30 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="index_files/figure-html5/unnamed-chunk-5-1.png" width="624" style="display: block; margin: auto;" /></p>
 </div>
+<h2 id="factors-of-my-analysis">Factors of My Analysis</h2>
+<p>I want to consider how self-reported religiousness relates to support for EACCP. The relig_imp variable is what I used to find this. Respondents were asked “How important is religion in your life?” and were offered four options: Very Important, Somewhat Important, Not Too Important, and Not at All Important. Notably, there are some answers Missing on this question. I chose to unite those who deemed religion Very Important and Somewhat Important in my analysis to create the variable religion_important, more generally referring to people who considered religion important to their lives.</p>
+<p>Below is a bar plot showing the proportion of respondents religion_important who support EACCP and scatterplot with a line of best fit showing the relationship between Support for EACCP and self-reported religious importance, using the religion_important variable.</p>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="index_files/figure-html5/unnamed-chunk-6-1.png" width="624" style="display: block; margin: auto;" /></p>
+
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="index_files/figure-html5/unnamed-chunk-7-1.png" width="624" style="display: block; margin: auto;" /></p>
+<pre><code>[1] 0.3700814</code></pre>
+<pre><code>[1] NA</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="index_files/figure-html5/unnamed-chunk-8-1.png" width="624" style="display: block; margin: auto;" /></p>
 </div>
+There are some other variables, apart from conservativeness, I anticipated could be tied to people’s likelihood to support EACCP, like whiteness and level of education. Below find scatterplots showing the relationship between Support for EACCP and nonwhiteness and a lack of college education.<br />
+
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/unnamed-chunk-9-1.png" width="624" style="display: block; margin: auto;" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" width="624" style="display: block; margin: auto;" /></p>
+</div>
+<p>The line of best fit within the plots shows a positive relationship between higher proportions of non-college educated people and support for EACCP and a negative relationship between higher proportions of minorities and support for EACCP. I recognized that these could all be possible confounding variables so used linear regressions to make my observations more effective.</p>
+<p>I made a bivariate linear regression comparing Support of EACCP and Religious Importance and a Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level, to control for some of possible confounding variables. Ideally, one would control for all possible confounders; however, here I chose what I anticipated might be most relevant to my inquiry. Below is a table displaying the resulting coefficient estimates, standard errors, and p-values.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre><code>
 Call:
@@ -1803,7 +1831,8 @@ no_college
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>##Results</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
