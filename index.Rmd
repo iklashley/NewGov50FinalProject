@@ -51,6 +51,7 @@ I chose to use two different cross-sectional survey data sets and merge them int
 This data amalgamates responses to policy preference questions from Cooperative Election Study (CES) polls spanning between the years 2006-2021. This dataset reflects 557,456 responses across 54 policy preference question items. The analysis in this report concentrates on the guns_permits policy preference, gathering respondents' opinions on policy that would make accessing concealed carry permits easier to access. 
 
 2. Cumulative CCES Common Content 
+
 This data incorporates the same policy preference data as the previous dataset but supplements it with additional categorical variables, specifically demographic information including race, educational background, gender, employment status, military status, etc.
 
 The research design adopts an observational approach, employing correlational analysis that specifically refrains from making presumptions about causal relationships.
@@ -181,13 +182,16 @@ ces |>
   geom_point(shape = 1) +
   geom_smooth(method = "lm")+
   xlim(0,1) + ylim(0,1)+
-  labs(title = "Support for EACCP by Proportion of People who Consider Religion Important",
+  labs(title = "Support for EACCP by Prop. of Self-Reported Religious",
        x = "Proportion of People who Consider Religion Important",
        y = "Proportion of Support for Easier Access to Conceal Carry Permits",
        caption = "Source: Cumulative CES Policy Preferences; Cumulative CCES Common Content")
 ```
 
+### Anticipating Some Confounding Variables
+
 There are some other variables, apart from conservativeness, I anticipated could be tied to people's likelihood to support EACCP, like whiteness and level of education. Below find scatterplots showing the relationship between Support for EACCP and nonwhiteness and a lack of college education.
+
 
 ```{r}
 #Creating Binary Variable for Non-whiteness
@@ -254,6 +258,8 @@ ces |>
 
 The line of best fit within the plots shows a positive relationship between higher proportions of non-college educated people and support for EACCP and a negative relationship between higher proportions of minorities and support for EACCP. I recognized that these could all be possible confounding variables so used linear regressions to make my observations more effective. 
 
+### Linear Regressions
+
 I made a bivariate linear regression comparing Support of EACCP and Religious Importance and a Multivariate Linear Regression Comparing Support of EACCP and Religious Importance, Liberal-ness, Unemployment, Gender (woman), Nonwhiteness, Parenthood, Military Background, and Education Level, to control for some of possible confounding variables. Ideally, one would control for all possible confounders; however, here I chose what I anticipated might be most relevant to my inquiry. Below is are tables displaying the linear regressions I conducted and the resulting coefficient estimates, standard errors, and p-values. 
 
 ```{r, echo = FALSE}
@@ -312,7 +318,7 @@ results <-
   
 
 ```
-##Results 
+## Results 
 
 ### Bivariate Regression Interpretation
 The bivariate model shows that for an increase of 1 unit in proportion of self-reported religious people there is a 0.15 unit increase in the proportion of support for EACCP. In other words, the proportion of people who supported EACCP would likely be 0.15 higher in a group with self-reported religious people than in a group without.
@@ -338,9 +344,15 @@ A causal link between self-reported religiousness and increased support for EACC
 
 With the initial question of how religiousness impacts position on gun control policy, I came to a hypothesis that self-reported religious people would be more likely to support policy that made easier access to concealed carry permits. My results supported my initial hypothesis showing that a 1 unit increase in self-reported religious people led to a .15 unit increase in support for EACCP, and a .13 unit increase controlling for a few confounding variables. With 0 standard error and 0 p-value, these results are statistically significant. 
 
+### Limitations
+
 There are however some limitations to my inquiry. Firstly, the phrasing of the question "How important is religion in your life?” may lead to many different interpretations. There are some people who may over-inflate or under-inflate their religiousness, a confounding variable that would certainly impact the results of my analysis. There are also so many other confounding variables that are difficult to predict, like a person's past experiences with guns or with gun violence, that would undoubtedly affect the relationships I have found. 
 
+### Improvements
+
 If given more resources to improve my analysis, I might invest in finding more longitudinal data, so that I might see if a given person's self-reported religiousness increases if their support for easier access to conceal carry permits might also increase. This kind of data would be helpful in mitigating the confounding variable of self-reporting, as a person religiousness now can be relative to their religiousness in the past rather than an absolute measure of religious importance. I would also just increase the questions asked in the survey (like a question about being the victim of gun violence, for example) to attempt to control for as many confounders as possible. 
+
+### Why This Matters
 
 I believe this kind of analysis is essential for understanding the people within the United States and thus also understanding how to enact meaningful and beneficial change in the United States.
 
